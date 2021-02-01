@@ -24,7 +24,7 @@ html , body {
 }
 #app {
   height: 100%;
-  overflow: auto;
+  overflow-y: auto;
   font-family: "Poppins";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

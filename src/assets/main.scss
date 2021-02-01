@@ -115,6 +115,7 @@
     img {
       width: 100%;
       margin-top: 0px!important;
+      height: unset!important;
     }
   }
   .blog-content {
@@ -156,9 +157,6 @@
   }
   .flambu-anlytics-box {
     padding: 60px 0px 80px 0px;
-  }
-  .blog-detail {
-    padding:0px 15px;
   }
 }
 

@@ -9,7 +9,7 @@
       <b-container>
         <vue-masonry-wall
           :items="categories"
-          :options="{ padding: 18 }"
+          :options="{ padding: 15 }"
           @append="append"
         >
           <template v-slot:default="{ item }">

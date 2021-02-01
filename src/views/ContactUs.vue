@@ -94,6 +94,9 @@ export default {
             width: 100%;
         }
     }
+    img {
+        max-width: 100%;
+    }
     .fa-map-marker-alt {
         color: $highlited-color;
     }

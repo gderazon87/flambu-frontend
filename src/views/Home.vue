@@ -154,7 +154,7 @@ export default {
       margin-bottom: 60px;
     }
     img {
-      width: 100%;
+      max-width: 100%;
     }
   }
 }

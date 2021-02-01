@@ -1,5 +1,4 @@
 <template>
-  <div>
     <b-row class="blog-content">
       <b-col sm="10" offset-sm="1">
         <b-row>
@@ -42,7 +41,6 @@
         </b-row>
       </b-col>
     </b-row>
-  </div>
 </template>
 
 <script>
@@ -93,6 +91,7 @@ export default {
 </script>
 <style lang="scss">
 .blog-content {
+  margin: 0px!important;
   padding: 7em 0em;
   img {
     width: 100%;

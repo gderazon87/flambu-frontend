@@ -61,6 +61,7 @@ export default {
 
 <style lang="scss">
 .blog-detail {
+  margin: 0px!important;
   .go-back {
     margin-top: 4em;
     margin-bottom: 2em;
