@@ -1,14 +1,8 @@
 <template>
   <div>
-    <div class="transportation-box">
+    <div class="category-search-box category-all">
       <b-container>
-        <div class="text-center">
-          <b-img :src="flameLog" class="flame-logo" />
-        </div>
         <div class="flame-content">
-          <p class="landing-big-title">
-            Transportation
-          </p>
           <div class="d-flex" align-content="between">
             <b-input-group class="home-search-group">
               <template #prepend>
@@ -170,7 +164,7 @@ export default {
 <style lang="scss">
 @import "@/assets/custom/_variables.scss";
 .item-detail-box {
-    margin-top: 100px;
+    margin-top: 60px;
 }
 .item-detail {
   font-size: 14px;

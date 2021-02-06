@@ -1,13 +1,13 @@
 <template>
   <div class="items-page">
-    <div class="transportation-box">
-      <b-container>
-        <div class="text-center"> 
+    <div class="category-search-box" :class="currentCategoryId=='all'? 'category-all': ''" :style="getTransportationBoxStyle()">
+      <b-container v-if="loaded">
+        <div v-if="category" class="text-center"> 
           <b-img :src="flameLog" class="flame-logo"/> 
         </div>
         <div class="flame-content">
-          <p class="landing-big-title">
-            Transportation
+          <p v-if="category" class="landing-big-title">
+            {{category.name}}
           </p>
           <div class="d-flex" align-content="between"> 
             <b-input-group class="home-search-group">
@@ -32,6 +32,7 @@
 
 <script>
 import { getItemListWithCategory } from '@/services/ItemsService';
+import { getCategoryWithId } from '@/services/CategoryService';
 import TryFlumbuMobile from '../components/TryFlumbuMobile.vue';
 import ItemsTable from '../components/Table/ItemsTable.vue';
 import DescribeNeedForm from '../components/Form/DescribeNeedForm.vue';
@@ -46,25 +47,45 @@ export default {
     ItemsTable,
     DescribeNeedForm
   },
-  async mounted() {
-    if(this.$route.query.category) this.currentCategory = this.$route.query.category;
-    if(this.$route.query.searchKey) this.searchKey = this.$route.query.searchKey;
-    await this.searchItems();
+  mounted() {
+    this.initData();
   },
+  watch:{
+    $route (){
+      this.category = null;
+      this.loaded = false;
+      this.currentCategoryId = 'all';
+      this.initData();
+    }
+  }, 
   methods: {
+    async initData() {
+      if(this.$route.query.category) this.currentCategoryId = this.$route.query.category;
+      if(this.$route.query.searchKey) this.searchKey = this.$route.query.searchKey;
+      if(this.currentCategoryId!='all') this.category = await getCategoryWithId(this.currentCategoryId)
+      await this.searchItems();
+    },
     async searchItems() {
       try {
-        this.items = await getItemListWithCategory(this.currentCategory,this.searchKey);
+        this.items = await getItemListWithCategory(this.currentCategoryId,this.searchKey);
         this.loaded = true;
       }catch(e) {
         console.log(e);
       }
+    },
+    getTransportationBoxStyle() {
+      let style= {};
+      if(this.category) {
+        style['background-image'] = 'url(' + this.category.categoryImagePath + ')';
+      }
+      return style;
     }
   },
   data: function() {
     return {
-      currentCategory: 'all',
+      currentCategoryId: 'all',
       searchKey: '',
+      category: null,
       items: [],
       flameLog,
       searchIcon,
@@ -75,8 +96,7 @@ export default {
 </script>
 
 <style lang="scss">
-  .transportation-box {
-    background-image: url("../assets/img/transportation.png");
+  .category-search-box {
     min-height: 35vw;
     background-size: cover;
     background-position: center center;
@@ -84,6 +104,15 @@ export default {
     color: white;
     .container {
       padding-bottom: 30px;
+    }
+    &.category-all {
+      min-height: 10em;
+      .container {
+        padding-top: 3em;
+        .home-search-group {
+          border: 1px solid #c7c7c7;
+        }
+      }
     }
   }
 </style>

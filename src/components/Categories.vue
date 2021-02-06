@@ -8,14 +8,20 @@
     <div class="flambu-story caregory-images">
       <b-container>
         <vue-masonry-wall
+          v-if="categories.length>0"
           :items="categories"
           :options="{ padding: 15 }"
           :ssr="{columns: 1}"
-          @append="append"
         >
           <template v-slot:default="{ item }" >
-            <div class="item" @click="goToCategory(item.$key)">
-              <img :src="item.categoryImagePath" />
+            <div class="item" @click="goToCategory(item.$key)" @mouseover="currentHoverId = item.$key" @mouseleave="currentHoverId = null">
+              <transition name="fade">
+                <div v-if="currentHoverId == item.$key" class="overlay">
+                  <h4>{{item.name}}</h4>
+                </div>
+              </transition>
+              
+              <img :src="item.categoryImagePath" :alt="item.name" />
             </div>
           </template>
         </vue-masonry-wall>
@@ -37,9 +43,6 @@ export default {
   methods: {
       goToCategory(key) {
         this.$router.push('/items?category=' + key);
-      },
-      append() {
-          
       }
   },
   async mounted() {
@@ -48,6 +51,7 @@ export default {
   data: function() {
     return {
       categories: [],
+      currentHoverId: null
     };
   },
 };
@@ -63,11 +67,28 @@ export default {
         .masonry-column {
             cursor: pointer;
             flex-basis:  33.3%;
+            .item {
+              position: relative;
+            }
             img {
                 width: 100%;
                 border-radius: 8px;
             }
         }
+    }
+    .overlay {
+			background: rgba(#000, .65);
+			display: flex;
+			height: 100%;
+			position: absolute;
+			width: 100%;
+      align-items: center;
+      h4 {
+        color: white;
+        opacity: 0.8;
+        width: 100%;
+        text-align: center;
+      }
     }
 }
 </style>

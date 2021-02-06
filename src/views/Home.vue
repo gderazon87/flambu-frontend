@@ -188,7 +188,7 @@ export default {
   margin-top: 60px;
 }
 .flame-content {
-  width: 45em;
+  width: 54em;
   margin: auto;
 }
 </style>
