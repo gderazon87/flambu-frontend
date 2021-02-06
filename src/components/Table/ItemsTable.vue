@@ -26,7 +26,10 @@
                           :center="{lat:item.location.lat, lng:item.location.lon}"
                           :zoom="10"
                           map-type-id="terrain"
-                        ></GmapMap>
+                        >
+                           <GmapMarker ref="myMarker"
+                    :position="{lat:item.location.lat, lng:item.location.lon}" />
+                        </GmapMap>
                     </div>
                     
                 </div>

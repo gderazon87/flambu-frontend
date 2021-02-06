@@ -60,7 +60,10 @@
                 :center="{lat:item.location.lat, lng:item.location.lon}"
                 :zoom="10"
                 map-type-id="terrain"
-              ></GmapMap>
+              >
+                 <GmapMarker ref="myMarker"
+                    :position="{lat:item.location.lat, lng:item.location.lon}" />
+              </GmapMap>
             </div>
           </div>
         </b-col>
@@ -69,7 +72,7 @@
         <b-tabs pills>
           <b-tab title="Item Reviews" active>
             <ItemReviews :data="reviews"></ItemReviews>
-            <h5 v-if="reviews.length==0 && loaded" class="text-center">There are no reviews yet for this item, be the first to rent and give a review. (Get the app button)</h5>
+            <h5 v-if="reviews.length==0 && loaded" class="text-center no-review-yet">There are no reviews yet for this item, be the first to rent and give a review. <b-button class="pink-round-btn ml-4">Get the App</b-button></h5>
           </b-tab>
           <b-tab title="Owner Reviews">
             <ItemReviews :data="ownerReviews"></ItemReviews>

@@ -11,7 +11,6 @@
           v-if="categories.length>0"
           :items="categories"
           :options="{ padding: 15 }"
-          :ssr="{columns: 1}"
         >
           <template v-slot:default="{ item }" >
             <div class="item" @click="goToCategory(item.$key)" @mouseover="currentHoverId = item.$key" @mouseleave="currentHoverId = null">
