@@ -16,14 +16,15 @@
               </template>
               <b-form-input
                 placeholder="What are you looking for??"
+                v-on:keyup.enter="searchItems()" v-model="searchKey"
               ></b-form-input>
             </b-input-group>
-            <b-button class="pink-round-btn">Search</b-button>
+            <b-button class="pink-round-btn" @click="searchItems()">Search</b-button>
           </div>
         </div>
       </b-container>
     </div>
-    <b-container class="item-detail-box">
+    <b-container v-if="item" class="item-detail-box">
       <p
         class="landing-small-title pink-color go-back cursor-pointer"
         @click="goBack()"
@@ -33,7 +34,7 @@
       </p>
       <b-row class="pt-4 pb-4 item-detail">
         <b-col lg="4">
-          <b-img :src="item.imagePath"></b-img>
+          <b-img :src="item.publicImagePath" class="item-detail-image"></b-img>
         </b-col>
         <b-col lg="8">
           <p class="landing-small-title bold-text mb-1">{{ item.title }}</p>
@@ -46,23 +47,27 @@
               no-border
               readonly
             ></b-form-rating>
-            <span class="rating-count ml-2">({{ item.ratingCount }})</span>
+            <span class="rating-count ml-2">({{ item.numberOfReviews }})</span>
           </div>
           <p class="item-description mb-5">{{ item.description }}</p>
           <div>
             <div class="float-left">
               <b-button class="pink-round-btn mb-3">Go to the app</b-button>
               <p class="landing-small-title bold-text">
-                {{ item.price }} / day
+                {{item.dailyRentalPriceWithCurrencySymbol}} / day
               </p>
-              <span>by {{ item.owner }}</span>
+              <span>by {{item.ownerUserName}}</span>
             </div>
             <div class="d-flex bold-text float-right item-map-location">
               <p class="mr-3">
-                Tel Aviv <br />
-                - Israel
+                {{item.locationAddress}}
               </p>
-              <b-img :src="itemMapImg"></b-img>
+              <GmapMap
+                :center="{lat:item.location.lat, lng:item.location.lon}"
+                :zoom="10"
+                map-type-id="terrain"
+                style="width: 160px; height: 140px"
+              ></GmapMap>
             </div>
           </div>
         </b-col>
@@ -71,9 +76,11 @@
         <b-tabs pills>
           <b-tab title="Item Reviews" active>
             <ItemReviews :data="reviews"></ItemReviews>
+            <h5 v-if="reviews.length==0 && loaded" class="text-center">There are no reviews yet for this item, be the first to rent and give a review. (Get the app button)</h5>
           </b-tab>
           <b-tab title="Owner Reviews">
-            <ItemReviews :data="reviews"></ItemReviews>
+            <ItemReviews :data="ownerReviews"></ItemReviews>
+            <h5 v-if="ownerReviews.length==0 && loaded" class="text-center">There are no owner reviews yet for this item.</h5>
           </b-tab>
         </b-tabs>
       </div>
@@ -101,14 +108,13 @@
 <script>
 import flameLog from "@/assets/img/flame-logo.png";
 import searchIcon from "@/assets/img/lupa.png";
-import item1Img from "@/assets/img/items/item1.png";
-import relatedItem1Img from "@/assets/img/items/relatedItem1.png";
-import itemMapImg from "@/assets/img/items/item-map.png";
-import reviewAvatarImg from "@/assets/img/review/avatar.png";
 
 import ItemReviews from "../components/ItemReviews.vue";
 import RelatedItems from "../components/RelatedItems.vue";
 import TryFlumbuMobile from "../components/TryFlumbuMobile.vue";
+
+import { getItemWithId, getRelatedItemsWithInCategory } from '@/services/ItemsService';
+import { getItemReviews, getOwnerItemReviews } from '@/services/ReviewService';
 
 export default {
   name: "ItemDetail",
@@ -122,42 +128,41 @@ export default {
     goBack() {
       this.$router.push({ name: "Items" });
     },
-  },
-  mounted() {
-    for (var i = 0; i < 200; i++) {
-      this.reviews.push({
-        name: "Bruce Wayne",
-        content:
-          "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not know how to pursue pleasure rationally.",
-        avatar: reviewAvatarImg,
-        rating: 3,
-      });
-      this.relatedItems.push({
-          imagePath: relatedItem1Img
-      })
+    searchItems() {
+      this.$router.push('/items?searchKey=' + this.searchKey);
+    },
+    async initData() {
+      this.itemId = this.$route.params.id;
+      this.item = await getItemWithId(this.itemId);
+      this.relatedItems = await getRelatedItemsWithInCategory(this.item.categoryIds,this.item.$key);
+      this.reviews = await getItemReviews(this.itemId);
+      if(this.item.userRef && this.item.userRef.id) this.ownerReviews = await getOwnerItemReviews(this.item.userRef.id);
+      this.loaded = true;
     }
+  },
+  watch:{
+    $route (){
+      this.show = false;
+      this.initData();
+    }
+  }, 
+  async mounted() {
+    this.initData();
   },
   data: function() {
     return {
       flameLog,
-      itemMapImg,
       searchIcon,
+      searchKey: '',
       messageForm: {
         message: "",
       },
       reviews: [],
+      ownerReviews: [],
       relatedItems: [],
-      item: {
-        id: 1,
-        title: "But I must put a title here",
-        rating: 3.5,
-        ratingCount: 162,
-        description:
-          "But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not.",
-        price: 330,
-        imagePath: item1Img,
-        owner: "Steven Rogers",
-      },
+      itemId: null,
+      item: null,
+      loaded: false
     };
   },
 };
@@ -178,6 +183,9 @@ export default {
   }
   .item-map-location img {
     max-width: 140px;
+  }
+  .item-detail-image {
+    max-width :100%;
   }
 }
 </style>

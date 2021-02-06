@@ -14,15 +14,15 @@
               <template #prepend>
                 <b-img :src="searchIcon"/> 
               </template>
-              <b-form-input placeholder="What are you looking for??"></b-form-input>
+              <b-form-input placeholder="What are you looking for??" v-on:keyup.enter="searchItems()" v-model="searchKey"></b-form-input>
             </b-input-group>  
-            <b-button class="pink-round-btn">Search</b-button>
+            <b-button class="pink-round-btn" @click="searchItems()">Search</b-button>
           </div>
         </div>
       </b-container>
     </div>
     <b-container>
-      <ItemsTable :data="items"></ItemsTable>
+      <ItemsTable :data="items" :loaded="loaded"></ItemsTable>
       <DescribeNeedForm class="mt-5"></DescribeNeedForm>
     </b-container>
     
@@ -31,13 +31,13 @@
 </template>
 
 <script>
+import { getItemListWithCategory } from '@/services/ItemsService';
 import TryFlumbuMobile from '../components/TryFlumbuMobile.vue';
 import ItemsTable from '../components/Table/ItemsTable.vue';
 import DescribeNeedForm from '../components/Form/DescribeNeedForm.vue';
 
 import flameLog from "@/assets/img/flame-logo.png";
 import searchIcon from "@/assets/img/lupa.png";
-import item1Img from '@/assets/img/items/item1.png';
 
 export default {
   name: 'Items',
@@ -46,25 +46,29 @@ export default {
     ItemsTable,
     DescribeNeedForm
   },
-  mounted() {
-    for(var i=0;i<200;i++) {
-      this.items.push({
-        id: i+1,
-        title: 'But I must put a title here',
-        rating: 3.5,
-        ratingCount: 162,
-        description: 'But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness. No one rejects, dislikes, or avoids pleasure itself, because it is pleasure, but because those who do not.',
-        price: 330,
-        imagePath: item1Img,
-        owner: 'Steven Rogers'
-      })
+  async mounted() {
+    if(this.$route.query.category) this.currentCategory = this.$route.query.category;
+    if(this.$route.query.searchKey) this.searchKey = this.$route.query.searchKey;
+    await this.searchItems();
+  },
+  methods: {
+    async searchItems() {
+      try {
+        this.items = await getItemListWithCategory(this.currentCategory,this.searchKey);
+        this.loaded = true;
+      }catch(e) {
+        console.log(e);
+      }
     }
   },
   data: function() {
     return {
+      currentCategory: 'all',
+      searchKey: '',
       items: [],
       flameLog,
-      searchIcon
+      searchIcon,
+      loaded: false
     };
   },
 }

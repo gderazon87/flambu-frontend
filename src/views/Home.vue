@@ -16,9 +16,10 @@
               </template>
               <b-form-input
                 placeholder="What are you looking for??"
+                 v-on:keyup.enter="searchItems()" v-model="searchKey"
               ></b-form-input>
             </b-input-group>
-            <b-button class="pink-round-btn">Search</b-button>
+            <b-button class="pink-round-btn" @click="searchItems()">Search</b-button>
           </div>
         </div>
       </b-container>
@@ -113,6 +114,14 @@ export default {
     TryFlumbuMobile,
     Categories
   },
+  methods: {
+    async searchItems() {
+      this.$router.push('/items?searchKey=' + this.searchKey);
+    }
+  },
+  mounted() {
+
+  },
   data: function() {
     return {
       flameLog,
@@ -121,6 +130,7 @@ export default {
       enjoyWithoutBuyingImg,
       travelLightImg,
       substainableImg,
+      searchKey: ''
     };
   },
 };

@@ -10,11 +10,12 @@
         <vue-masonry-wall
           :items="categories"
           :options="{ padding: 15 }"
+          :ssr="{columns: 1}"
           @append="append"
         >
-          <template v-slot:default="{ item }">
-            <div class="item">
-              <b-img :src="item.src"></b-img>
+          <template v-slot:default="{ item }" >
+            <div class="item" @click="goToCategory(item.$key)">
+              <b-img :src="item.categoryImagePath"></b-img>
             </div>
           </template>
         </vue-masonry-wall>
@@ -24,8 +25,8 @@
 </template>
 
 <script>
-import category1Img from "@/assets/img/categories/category1.png";
 import VueMasonryWall from "vue-masonry-wall";
+import { getCategoryList } from '@/services/CategoryService';
 
 export default {
   name: "Categories",
@@ -34,17 +35,15 @@ export default {
   },
   props: [],
   methods: {
+      goToCategory(key) {
+        this.$router.push('/items?category=' + key);
+      },
       append() {
           
       }
   },
-  mounted() {
-    for (var i = 0; i < 9; i++) {
-      this.categories.push({
-        id: i + 1,
-        src: category1Img,
-      });
-    }
+  async mounted() {
+    this.categories = await getCategoryList();
   },
   data: function() {
     return {
@@ -62,6 +61,7 @@ export default {
     .masonry-wall {
         flex-wrap: wrap;
         .masonry-column {
+            cursor: pointer;
             flex-basis:  33.3%;
             img {
                 width: 100%;

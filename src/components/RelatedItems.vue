@@ -4,8 +4,11 @@
         Related Items
     </p>
     <b-row class="mb-5">
-        <b-col v-for="(item,index) in items" :key="index">
-            <b-img :src="item.imagePath"></b-img>
+        <b-col lg="4" v-for="(item,index) in items" :key="index">
+          <div class="related-item-div cursor-pointer" @click="goToRelatedItem(item)">
+            <b-img :src="item.publicImagePath"></b-img>
+          </div>
+            
         </b-col> 
     </b-row>
     <b-pagination
@@ -24,6 +27,9 @@ export default {
   components: {},
   props: ["data"],
   methods: {
+    goToRelatedItem(item) {
+      this.$router.push('/item/' + item.$key);
+    }
   },
   data: function() {
     return {
@@ -51,8 +57,18 @@ export default {
 .related-items {
     margin-top: 60px;
     margin-bottom: 50px;
+    .related-item-div {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      height: 100%;
+      background: #fafafa;
+      padding: 10px;
+      border-radius: 10px;
+    }
     img {
-        width: 100%;
+        max-width: 100%;
     }
 }
 </style>

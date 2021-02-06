@@ -2,27 +2,32 @@
   <div>
     <table class="items-table mb-4 mt-4">
       <tbody>
-        <tr v-for="item in items" :key="item.id">
+        <tr v-for="item in items" :key="item.$key">
           <td>
-            <b-row class="pt-4 pb-4 cursor-pointer" @click="goToDetail(item.id)">
+            <b-row class="pt-4 pb-4" >
               <b-col lg="4">
-                <b-img :src="item.imagePath"></b-img>
+                <b-img :src="item.publicImagePath" class="cursor-pointer" @click="goToDetail(item.$key)"></b-img>
               </b-col>
               <b-col lg="8">
-                <p class="landing-small-title bold-text mb-1">{{ item.title }}</p>
+                <p class="landing-small-title bold-text cursor-pointer mb-1" @click="goToDetail(item.$key)">{{ item.title }}</p>
                 <div class="align-items-center">
                     <b-form-rating :value="item.rating" color="#FA6F6F" class="p-0" inline no-border readonly></b-form-rating>
-                    <span class="rating-count ml-2">({{item.ratingCount}})</span>
+                    <span class="rating-count ml-2">({{item.numberOfReviews}})</span>
                 </div>
                 <p class="item-description mb-5">{{ item.description }}</p>
                 <div>
                     <div class="float-left pt-5">
-                        <p class="landing-small-title bold-text">{{item.price}} / day </p>
-                        <span>by {{item.owner}}</span>
+                        <p class="landing-small-title bold-text">{{item.dailyRentalPriceWithCurrencySymbol}} / day </p>
+                        <span>by {{item.ownerUserName}}</span>
                     </div>
                     <div class="d-flex bold-text float-right item-map-location">
-                        <p class="mr-3">Tel Aviv <br> - Israel</p>
-                        <b-img :src="itemMapImg"></b-img>
+                        <p class="mr-3">{{item.locationAddress}}</p>
+                        <GmapMap
+                          :center="{lat:item.location.lat, lng:item.location.lon}"
+                          :zoom="10"
+                          map-type-id="terrain"
+                          style="width: 160px; height: 140px"
+                        ></GmapMap>
                     </div>
                     
                 </div>
@@ -32,7 +37,9 @@
         </tr>
       </tbody>
     </table>
+    <h5 v-if="loaded" class="text-center">There is no data for items. </h5>
     <b-pagination
+      v-if="rows>0"
       v-model="currentPage"
       :total-rows="rows"
       :per-page="perPage"
@@ -47,7 +54,7 @@ import itemMapImg from '@/assets/img/items/item-map.png';
 export default {
   name: "ItemsTable",
   components: {},
-  props: ["data"],
+  props: ["data","loaded"],
   methods: {
       goToDetail(id) {
           this.$router.push('/item/' + id);
@@ -87,9 +94,6 @@ export default {
     font-size: 14px;
     .rating-count,.item-description {
         color: #31313199;
-    }
-    .item-map-location img{
-        max-width: 140px;
     }
   }
 }
