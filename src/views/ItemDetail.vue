@@ -58,7 +58,7 @@
               </p>
               <span>by {{item.ownerUserName}}</span>
             </div>
-            <div class="d-flex bold-text float-right item-map-location">
+            <div class="d-flex bold-text item-map-location">
               <p class="mr-3">
                 {{item.locationAddress}}
               </p>
@@ -66,7 +66,6 @@
                 :center="{lat:item.location.lat, lng:item.location.lon}"
                 :zoom="10"
                 map-type-id="terrain"
-                style="width: 160px; height: 140px"
               ></GmapMap>
             </div>
           </div>
@@ -180,9 +179,6 @@ export default {
   .rating-count,
   .item-description {
     color: #31313199;
-  }
-  .item-map-location img {
-    max-width: 140px;
   }
   .item-detail-image {
     max-width :100%;

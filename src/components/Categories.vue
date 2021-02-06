@@ -15,7 +15,7 @@
         >
           <template v-slot:default="{ item }" >
             <div class="item" @click="goToCategory(item.$key)">
-              <b-img :src="item.categoryImagePath"></b-img>
+              <img :src="item.categoryImagePath" />
             </div>
           </template>
         </vue-masonry-wall>
@@ -65,6 +65,7 @@ export default {
             flex-basis:  33.3%;
             img {
                 width: 100%;
+                border-radius: 8px;
             }
         }
     }

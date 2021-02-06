@@ -20,13 +20,12 @@
                         <p class="landing-small-title bold-text">{{item.dailyRentalPriceWithCurrencySymbol}} / day </p>
                         <span>by {{item.ownerUserName}}</span>
                     </div>
-                    <div class="d-flex bold-text float-right item-map-location">
+                    <div class="d-flex bold-text item-map-location">
                         <p class="mr-3">{{item.locationAddress}}</p>
                         <GmapMap
                           :center="{lat:item.location.lat, lng:item.location.lon}"
                           :zoom="10"
                           map-type-id="terrain"
-                          style="width: 160px; height: 140px"
                         ></GmapMap>
                     </div>
                     
